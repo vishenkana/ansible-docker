@@ -1,0 +1,45 @@
+- name: Set niitp_docker_data_root variable to default value
+  set_fact:
+    niitp_docker_data_root: "{{ __niitp_docker_data_root }}"
+  when: niitp_docker_data_root|default(None) == None
+
+- name: Create Docker config directory
+  file:
+    path: "{{ niitp_docker_config_dir }}"
+    state: directory
+    mode: "0774"
+
+- name: Configure Docker
+  template:
+    src: daemon.json.j2
+    dest: "{{ niitp_docker_config_dir }}/daemon.json"
+    mode: "0644"
+  notify: Restart Docker
+
+- name: Configure Astra Linux
+  when: ansible_facts['distribution'] == 'Astra Linux'
+  block:
+    - name: Create rootless unit config directory
+      file:
+        path: /usr/lib/systemd/system/rootless-docker@.service.d
+        state: directory
+        mode: "0755"
+
+    - name: Create rootless unit config directory
+      copy:
+        src: 99-sssd.conf
+        dest: /usr/lib/systemd/system/rootless-docker@.service.d
+        mode: "0644"
+
+    - name: Get isolation status
+      command: astra-docker-isolation is-enabled
+      register: isolation
+      changed_when: false
+      failed_when: isolation.rc not in [0,1]
+
+    - name: Enable Docker isolation
+      command: astra-docker-isolation enable
+      when: isolation.rc == 1
+      register: result
+      changed_when: true
+      notify: Restart Docker

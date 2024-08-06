@@ -1,0 +1,23 @@
+- name: Configure docker service Astra Linux
+  when: ansible_facts['distribution'] == 'Astra Linux'
+  block:
+    - name: Stop non-rootless docker service
+      systemd:
+        name: docker
+        enabled: false
+        state: stopped
+        masked: false
+
+    - name: Stop non-rootless containerd service
+      systemd:
+        name: containerd
+        enabled: false
+        state: stopped
+        masked: false
+
+- name: Start Docker service
+  systemd:
+    name: "{{ niitp_docker_service }}"
+    enabled: true
+    state: started
+    masked: false

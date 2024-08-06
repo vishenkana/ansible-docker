@@ -1,0 +1,4 @@
+- name: Install Docker
+  package:
+    name: "{{ niitp_docker_packages }}"
+    state: "present"

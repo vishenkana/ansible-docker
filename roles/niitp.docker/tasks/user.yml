@@ -1,0 +1,68 @@
+- name: Add the group '{{ niitp_docker_group }}'
+  group:
+    name: "{{ niitp_docker_group }}"
+    system: true
+
+- name: Add the user '{{ niitp_docker_user }}'
+  user:
+    name: "{{ niitp_docker_user }}"
+    groups: "{{ niitp_docker_group }}"
+    system: true
+
+- name: Change user maclabel
+  usermac:
+    user: "{{ niitp_docker_user }}"
+    max: "{{ niitp_docker_maclabel }}"
+
+- name: Get /etc/subuid contents
+  command: cat /etc/subuid
+  register: subuid
+  changed_when: false
+
+- name: Add to /etc/subuid user {{ niitp_docker_user }}
+  when: niitp_docker_user not in subuid.stdout
+  block:
+    - name: Add first user to /etc/subuid
+      command: usermod -v 100000-165535 {{ niitp_docker_user }}
+      when: subuid.stdout | trim | length == 0
+      register: result
+      changed_when: result.rc == 0
+
+
+    - name: Add to /etc/subuid user {{ niitp_docker_user }}
+      when: subuid.stdout | trim | length > 0
+      block:
+        - name: Get fact form /etc/subuid user {{ niitp_docker_user }}
+          set_fact:
+            highest_subuid: "{{ subuid.stdout_lines[-1].split(':')[1] }}"
+
+        - name: Add to /etc/subuid user {{ niitp_docker_user }}
+          command: usermod -v {{ highest_subuid | int + 65536 }}-{{ highest_subuid | int + 65536 + 65536 - 1 }} {{ niitp_docker_user }}
+          register: result
+          changed_when: result.rc == 0
+
+- name: Get /etc/subgid contents
+  command: cat /etc/subgid
+  register: subgid
+  changed_when: false
+
+- name: Add to /etc/subgid user {{ niitp_docker_user }}
+  when: niitp_docker_user not in subgid.stdout
+  block:
+    - name: Add first user to /etc/subgid
+      command: usermod -w 100000-165535 {{ niitp_docker_user }}
+      when: subgid.stdout | trim | length == 0
+      register: result
+      changed_when: result.rc == 0
+
+    - name: Add to /etc/subgid user {{ niitp_docker_user }}
+      when: subgid.stdout | trim | length > 0
+      block:
+        - name: Get fact from /etc/subgid user {{ niitp_docker_user }}
+          set_fact:
+            highest_subgid: "{{ subgid.stdout_lines[-1].split(':')[1] }}"
+
+        - name: Add to /etc/subgid user {{ niitp_docker_user }}
+          command: usermod -w {{ highest_subgid | int + 65536 }}-{{ highest_subgid | int + 65536 + 65536 - 1 }} {{ niitp_docker_user }}
+          register: result
+          changed_when: result.rc == 0

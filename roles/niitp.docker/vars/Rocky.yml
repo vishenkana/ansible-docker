@@ -1,0 +1,4 @@
+niitp_docker_packages: ["docker-ce", "docker-ce-cli", "containerd.io", "docker-buildx-plugin", "docker-compose-plugin"]
+niitp_docker_config_dir: "/etc/docker"
+niitp_docker_service: docker
+__niitp_docker_data_root: "/var/lib/docker"

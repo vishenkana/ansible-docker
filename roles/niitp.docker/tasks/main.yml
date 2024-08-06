@@ -1,0 +1,18 @@
+- name: Import variables specific to distribution
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "vars/{{ ansible_facts['lsb']['id'] }}.yml"
+    - "vars/{{ ansible_facts['distribution'] }}.yml"
+
+- name: Include install Docker tasks
+  include_tasks: install.yml
+
+- name: Include configure user tasks
+  include_tasks: user.yml
+  when: ansible_facts['distribution'] == 'Astra Linux'
+
+- name: Include configure service tasks
+  include_tasks: service.yml
+
+- name: Include configure Docker tasks
+  include_tasks: config.yml

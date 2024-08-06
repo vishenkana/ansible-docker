@@ -1,0 +1,44 @@
+---
+argument_specs:
+  main:
+    options:
+      niitp_docker_user:
+        type: "str"
+        required: false
+        description: "Rootless user"
+        default: "tasp"
+
+      niitp_docker_group:
+        type: "str"
+        required: false
+        description: "Rootless group"
+        default: "opertasp"
+
+      niitp_docker_maclabel:
+        type: "int"
+        required: false
+        description: "Docker containers mandatory label"
+        default: 0
+
+      niitp_docker_log_max_size:
+        type: "str"
+        required: false
+        description: "Docker logs max size"
+        default: "10m"
+
+      niitp_docker_log_max_file:
+        type: "int"
+        required: false
+        description: "Docker logs max file"
+        default: 10
+
+      niitp_docker_unsecure_registries:
+        type: "list"
+        elements: "str"
+        required: false
+        description: "Docker unsecure registries"
+
+      niitp_docker_data_root:
+        type: "path"
+        required: false
+        description: "Docker data root directory"

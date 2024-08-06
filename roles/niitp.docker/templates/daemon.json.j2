@@ -1,0 +1,11 @@
+{
+    {% if niitp_docker_unsecure_registries is defined and niitp_docker_unsecure_registries|d('')|length > 0 %}
+        "insecure-registries" : {{ niitp_docker_unsecure_registries | to_json }},
+    {% endif %}
+    "data-root": "{{ niitp_docker_data_root }}",
+    "log-driver": "json-file",
+    "log-opts": {
+        "max-size": "{{ niitp_docker_log_max_size }}",
+        "max-file": "{{ niitp_docker_log_max_file }}"
+    }    
+}

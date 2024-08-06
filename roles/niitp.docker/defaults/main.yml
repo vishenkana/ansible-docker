@@ -1,0 +1,6 @@
+niitp_docker_user: tasp
+niitp_docker_group: opertasp
+niitp_docker_maclabel: 0
+niitp_docker_log_max_size: "10m"
+niitp_docker_log_max_file: 10
+niitp_docker_unsecure_registries: []

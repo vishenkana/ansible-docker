@@ -1,0 +1,4 @@
+niitp_docker_packages: ["docker.io", "rootless-helper-astra", "docker-compose"]
+niitp_docker_config_dir: "/var/lib/rootlessdocker/{{ niitp_docker_user }}/l{{ niitp_docker_maclabel }}i0c0x0t0x0/.config/docker"
+niitp_docker_service: "rootless-docker@{{ niitp_docker_user }}@{{ niitp_docker_maclabel }}"
+__niitp_docker_data_root: "/var/lib/rootlessdocker/{{ niitp_docker_user }}/l{{ niitp_docker_maclabel }}i0c0x0t0x0/.local/share/docker"
